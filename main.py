@@ -8,8 +8,11 @@ from google import genai
 load_dotenv()
 
 class prevRefrence :
-    def storememory(self) -> None:
-        self.reference  = ""
+    def __init__(self):
+        self.response = ""
+    
+    def store_memory(self, text: str) -> None:  # ✅ Accept text parameter
+        self.response = text  # ✅ Store the text
 
 
 
@@ -40,15 +43,22 @@ chat = client.chats.create(model="gemini-2.5-flash")
 
 reference = prevRefrence()
 
+
+
 @dp.message_handler()
-async def send_messages(messages : types.Message):
-    await messages.answer("hi helllo boi")
+async def send_messages(message: types.Message):
+      
 
 
+    user_text = message.text
+    
+    response = chat.send_message(message=user_text)
+    
+    answer = response.text
+    reference.store_memory(answer)
+    print(f"AI Response: {reference.response}")
 
-
-
-
+    await message.reply(reference.response)
 
 
 
